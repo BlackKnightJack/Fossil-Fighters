@@ -46,7 +46,6 @@ public class VertexToolkit : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit) && !hammerLockout && currentTool == Tool.HAMMER)
         {
-
             //Put hit control and validation measures here later
 
             {
@@ -74,18 +73,7 @@ public class VertexToolkit : MonoBehaviour
             }
         }
 
-        /*Make sure the selected item is always either the hammer button or the drill button
-        if (GameObject.Find("EventSystem").GetComponent<EventSystem>().currentSelectedGameObject == null)
-        {
-            GameObject.Find("EventSystem").GetComponent<EventSystem>().SetSelectedGameObject(lastSelected);
-        }
-        else
-        {
-            lastSelected = GameObject.Find("EventSystem").GetComponent<EventSystem>().currentSelectedGameObject;
-        }
-        //*/
-
-        //Make sure the selected item is either the drill or the hammer
+        //*Make sure the selected item is either the drill or the hammer
         if (eventSystem.currentSelectedGameObject != firstTool.gameObject && eventSystem.currentSelectedGameObject != otherTool.gameObject)
         {
             eventSystem.SetSelectedGameObject(lastSelected);
@@ -94,6 +82,7 @@ public class VertexToolkit : MonoBehaviour
         {
             lastSelected = eventSystem.currentSelectedGameObject;
         }
+        //*/
     }
 
     void FixedUpdate()
