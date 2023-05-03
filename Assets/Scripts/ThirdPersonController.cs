@@ -52,36 +52,23 @@ public class ThirdPersonController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Move camera with WASD and/or screen pushing. I want to see how this works
-        if (MoveCamera())
+        //Assign movement vector
+        if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
         {
-            //Calculate the WASDvector
-            Vector2 WASDvector = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-
-            //Calculate the screenPushVector
-            Vector2 screenPushVector = Vector2.zero;
-            if (Input.mousePosition.x <= PADDING && WASDvector.x > -1) { screenPushVector += Vector2.left; }
-            if (Input.mousePosition.x >= Screen.width - PADDING && WASDvector.x < 1) { screenPushVector += Vector2.right; }
-            if (Input.mousePosition.y <= PADDING && WASDvector.y > -1) { screenPushVector += Vector2.down; }
-            if (Input.mousePosition.y >= Screen.height - PADDING && WASDvector.y < 1) { screenPushVector += Vector2.up; }
-
-            //Add both vectors together
-            cameraMoveVector = WASDvector + screenPushVector;
-        }
-        else
-        {
-            cameraMoveVector = Vector2.zero;
-        }
-
-        //Now let's see if I can register movement using Viewport
-        if (Input.GetMouseButton(0))
-        {
-            Vector2 fixedViewportCoords = mainCamera.ScreenToViewportPoint(Input.mousePosition) - Vector3.one * 0.5f;
-            playerMoveVector = fixedViewportCoords * 2;
+            playerMoveVector = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         }
         else
         {
             playerMoveVector = Vector2.zero;
+        }
+
+        //Assign camera vectors
+        {
+            cameraMoveVector = Vector2.zero;
+            if (Input.mousePosition.x <= PADDING) { cameraMoveVector += Vector2.left; }
+            if (Input.mousePosition.x >= Screen.width - PADDING) { cameraMoveVector += Vector2.right; }
+            if (Input.mousePosition.y <= PADDING) { cameraMoveVector += Vector2.down; }
+            if (Input.mousePosition.y >= Screen.height - PADDING) { cameraMoveVector += Vector2.up; }
         }
     }
 
@@ -89,7 +76,7 @@ public class ThirdPersonController : MonoBehaviour
     void FixedUpdate()
     {
         //Movement logic
-        if (Input.GetMouseButton(0))
+        if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
         {
             //Get and face the angle of movement
             float facingAngle = Mathf.Atan2(playerMoveVector.x, playerMoveVector.y) * Mathf.Rad2Deg + mainCamera.transform.eulerAngles.y;
@@ -104,7 +91,7 @@ public class ThirdPersonController : MonoBehaviour
         {
             //Calculate angles
             float angleXZ = Mathf.Atan2(cameraOffset.x, cameraOffset.z) * Mathf.Rad2Deg + cameraMoveVector.x * cameraSpeed;
-            float angleY = Mathf.Clamp(Mathf.Asin(cameraOffset.y / currentRadius) * Mathf.Rad2Deg + cameraMoveVector.y * cameraSpeed, -89, 89);
+            float angleY = Mathf.Clamp(Mathf.Asin(cameraOffset.y / currentRadius) * Mathf.Rad2Deg - cameraMoveVector.y * cameraSpeed, -89, 89);
 
             //Calculate vector components
             Vector3 vectorY = Vector3.up * Mathf.Sin(Mathf.Deg2Rad * angleY);
